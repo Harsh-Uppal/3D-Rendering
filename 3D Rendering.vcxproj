@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\abc\Desktop\Projects\C++\OpenGL libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\abc\Desktop\Projects\C++\OpenGL libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../OpenGL libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../OpenGL libraries\lib;$(LibraryPath)</LibraryPath>
     <LibraryWPath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,8 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\abc\Desktop\Projects\C++\OpenGL libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\abc\Desktop\Projects\C++\OpenGL libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>../OpenGL libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../OpenGL libraries\lib;$(LibraryPath)</LibraryPath>
     <LibraryWPath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
