@@ -1,7 +1,5 @@
 #include "Main.h"
 
-using namespace std;
-
 GLfloat cubeVerts[48];
 GLfloat headerVerts[] = {
 	-.7, .5, 0, 0, 0,
@@ -18,10 +16,13 @@ GLuint cubeIndices[] = {
 	0, 4, 1, 5, 2, 6, 3, 7
 };
 
-vector<vector<float>> projMat = { vector<float>{1, 0}, vector<float>{0, 1}, vector<float>{0, 0} };
-const Matrix projectionMat(projMat);
-const int MAX_FPS = 50;
-const int SKIP_TICKS = 1000 / MAX_FPS;
+const std::vector<std::vector<float>> projMat = {
+	std::vector<float>{1, 0},
+	std::vector<float>{0, 1},
+	std::vector<float>{0, 0} 
+};
+Matrix projectionMat(projMat);
+const int MAX_FPS = 50, SKIP_TICKS = 1000 / MAX_FPS;
 const float PI = acos(0) * 2;
 
 int main()
@@ -45,8 +46,6 @@ int main()
 	gladLoadGL();
 	glViewport(0, 0, 400, 400);
 	
-	update_cube_verts(0, 0, 0);
-
 	Shader meshShader("Shaders/default.vert", "Shaders/default.frag");
 	Shader texShader("Shaders/texture.vert", "Shaders/texture.frag");
 	
@@ -60,7 +59,7 @@ int main()
 	Texture headingTex("Assets/Heading.png", GL_TEXTURE_2D, GL_TEXTURE0);
 	headingTex.texUnit(texShader, "tex0", 0);
 
-	glLineWidth(50);
+	glLineWidth(5);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -68,6 +67,7 @@ int main()
 	DWORD next_game_tick = tickCount;
 	int sleep_time = 0, deltaTime = 0, lastTickCount = 0, frameCount = 0;
 	float rot = 0;
+
 	while (!glfwWindowShouldClose(window)) {
 		//Update
 		rot = sin(tickCount / 1000.0f) * PI;
@@ -75,7 +75,7 @@ int main()
 		cube.ChangeAllVertices(cubeVerts);
 		
 		//Display
-		glClearColor(.1, .3, .4, 1);
+		glClearColor(0, .1f, .1f, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		meshShader.Activate();
 		cube.Draw(GL_LINES);
@@ -112,14 +112,15 @@ int main()
 
 void update_cube_verts(float rotX, float rotY, float rotZ) {
 	Matrix p;
-	vector<float> pos;
+	Matrix rot_mat = rot_x_mat(rotX).Multiply(rot_y_mat(rotY)).Multiply(rot_z_mat(rotZ));
+	std::vector<float> pos;
 	short i = 0;
 
 	for (float x = -.5f; x < 1; x++) {
 		for (float y = -.5f; y < 1; y++) {
 			for (float z = -.5f; z < 1; z++) {
-				pos = { x, y, z };
-				p = MatMul(projectionMat, MatMul(rot_mat(rotX, rotY, rotZ), pos));
+				pos = std::vector<float>{ x, y, z };
+				p = projectionMat.Multiply(rot_mat).Multiply(pos);
 
 				cubeVerts[i] = p.GetValue(0, 0);
 				cubeVerts[i + 1] = p.GetValue(0, 1);
@@ -131,29 +132,25 @@ void update_cube_verts(float rotX, float rotY, float rotZ) {
 	}
 }
 
-Matrix rot_mat(float rx, float ry, float rz) {
-	return MatMul(rot_x_mat(rx), MatMul(rot_y_mat(ry), rot_z_mat(rz)));
-}
-
 Matrix rot_x_mat(float rot) {
-	vector<vector<float>> mat = {
-		vector<float>{ 1, 0, 0},
-		vector<float>{ 0, cos(rot), sin(rot)},
-		vector<float>{ 0, -sin(rot), cos(rot)} };
+	std::vector<std::vector<float>> mat = {
+		std::vector<float>{ 1, 0, 0},
+		std::vector<float>{ 0, cos(rot), sin(rot)},
+		std::vector<float>{ 0, -sin(rot), cos(rot)} };
 	
 	return Matrix(mat);
 }
 Matrix rot_y_mat(float rot) {
-	vector<vector<float>> mat = {
-		vector<float>{ cos(rot), 0, -sin(rot)},
-		vector<float>{ 0, 1, 0},
-		vector<float>{ sin(rot), 0, cos(rot)} };
+	std::vector<std::vector<float>> mat = {
+		std::vector<float>{ cos(rot), 0, -sin(rot)},
+		std::vector<float>{ 0, 1, 0},
+		std::vector<float>{ sin(rot), 0, cos(rot)} };
 	return Matrix(mat);
 }
 Matrix rot_z_mat(float rot) {
-	vector<vector<float>> mat = {
-		vector<float>{ cos(rot),sin(rot), 0},
-		vector<float>{ -sin(rot), cos(rot), 0},
-		vector<float>{ 0, 0, 1}};
+	std::vector<std::vector<float>> mat = {
+		std::vector<float>{ cos(rot),sin(rot), 0},
+		std::vector<float>{ -sin(rot), cos(rot), 0},
+		std::vector<float>{ 0, 0, 1}};
 	return Matrix(mat);
 }

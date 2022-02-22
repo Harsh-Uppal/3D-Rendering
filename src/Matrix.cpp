@@ -1,5 +1,6 @@
 #include "Matrix.h";
 
+//Matrix Constructors
 Matrix::Matrix() {
 	this->_mat = std::vector<std::vector<float>>(0);
 	columns = 0;
@@ -36,6 +37,17 @@ Matrix::Matrix(std::vector<std::vector<float>>& data)
 	this->columns = data.size();
 	this->rows = data[0].size();
 }
+Matrix::Matrix(const std::vector<std::vector<float>>& data)
+{
+	if (data.size() == 0) {
+		throw new std::exception("Invalid vector data passed to Matrix constructor");
+		return;
+	}
+
+	this->_mat = data;
+	this->columns = data.size();
+	this->rows = data[0].size();
+}
 
 void Matrix::SetValue(int column, int row, float num) {
 	if (column < 0 || column >= columns || row < 0 || row >= rows) {
@@ -46,6 +58,19 @@ void Matrix::SetValue(int column, int row, float num) {
 
 	_mat[column][row] = num;
 }
+//Fills the matrix with random values
+void Matrix::GenerateRandom() {
+	for (int c = 0; c < columns; c++)
+		for (int r = 0; r < rows; r++)
+			_mat[c][r] = std::rand() / 3276.7f;
+}
+//Fills the matrix with random integer values
+void Matrix::GenerateRandomInt() {
+	for (int c = 0; c < columns; c++)
+		for (int r = 0; r < rows; r++)
+			_mat[c][r] = std::rand() / 3277;
+}
+//Prints a section of the matrix
 void Matrix::Print(int columnStart, int rowStart, int columnEnd, int rowEnd) {
 
 	//Checking for errors
@@ -68,6 +93,7 @@ void Matrix::Print(int columnStart, int rowStart, int columnEnd, int rowEnd) {
 
 	std::cout << "------------" << std::endl;
 }
+//Prints the whole matrix
 void Matrix::Print() {
 	std::cout << "Matrix " << columns << "*" << rows << std::endl;
 	std::cout << "------------" << std::endl;
@@ -82,6 +108,7 @@ void Matrix::Print() {
 	std::cout << "------------" << std::endl;
 }
 
+//Matrix property geters
 float Matrix::GetValue(int column, int row) {
 	if (column < 0 || column >= columns || row < 0 || row >= rows) {
 		throw new std::exception("Invalid column or row index passed to Matrix::GetValue");
@@ -97,6 +124,7 @@ int Matrix::GetRows() {
 	return this->rows;
 }
 
+//Initializes the matrix
 void Matrix::Initialize() {
 	for (int i = 0; i < columns; i++)
 	{
@@ -107,59 +135,67 @@ void Matrix::Initialize() {
 	}
 }
 
-Matrix Matrix::GenerateRandom(int columns, int rows) {
-	Matrix newMat = Matrix(columns, rows);
+Matrix Matrix::Multiply(Matrix mat2) {
 
-	for (int c = 0; c < columns; c++)
-		for (int r = 0; r < rows; r++)
-			newMat.SetValue(c, r, (float)(std::rand() / 3276.7f));
+	mat2.RotateAntiClockWise();
 
-	return newMat;
-}
-Matrix Matrix::Multiply(Matrix mat1, Matrix mat2) {
-
-	mat2 = RotateAntiClockWise(mat2);
-
-	if (mat1.GetColumns() != mat2.GetColumns()) {
+	if (columns != mat2.GetColumns()) {
 		throw new std::exception("Mat1's columns must equal Mat2's rows");
 		return Matrix();
 	}
 
-	Matrix newMat = Matrix(mat2.GetRows(), mat1.GetRows());
-	float counter;
+	std::vector<std::vector<float>> newMat = std::vector<std::vector<float>>();
 
-	for (int r = 0; r < newMat.GetRows(); r++)
-		for (int c = 0; c < newMat.GetColumns(); c++)
+	float counter;
+	for (int r = 0; r < mat2.GetRows(); r++) {
+		newMat.push_back(std::vector<float>());
+		for (int c = 0; c < rows; c++)
 		{
 			counter = 0;
 
-			for (int cOfMat1 = 0; cOfMat1 < mat1.GetColumns(); cOfMat1++)
-				counter += mat1.GetValue(cOfMat1, r) *
-				mat2.GetValue(cOfMat1, mat2.GetRows() - c - 1);
+			for (int i = 0; i < columns; i++)
+				counter += _mat[i][c] * mat2.GetValue(i, mat2.GetRows() - r - 1);
 
-			newMat.SetValue(c, r, counter);
+			newMat[r].push_back(counter);
 		}
+	}
+
+	columns = mat2.GetRows();
 
 	return newMat;
 }
-Matrix Matrix::Rotate(Matrix mat, RotationManner manner) {
-	return manner == Matrix::RotationManner::ClockWise ? RotateClockWise(mat) : RotateAntiClockWise(mat);
+
+//Rotates the the matrix
+void Matrix::Rotate(RotationManner manner) {
+	manner == Matrix::RotationManner::ClockWise ? RotateClockWise() : RotateAntiClockWise();
 }
-Matrix Matrix::RotateClockWise(Matrix mat) {
-	Matrix newMat = Matrix(mat.GetRows(), mat.GetColumns());
+void Matrix::RotateClockWise() {
+	std::vector<std::vector<float>> temp = _mat;
+	_mat = std::vector<std::vector<float>>();
+	
+	for (int row = rows - 1; row >= 0; row--) {
+		_mat.push_back(std::vector<float>());
 
-	for (int row = 0; row < mat.GetRows(); row++)
-		for (int column = 0; column < mat.GetColumns(); column++)
-			newMat.SetValue(row, column, mat.GetValue(column, mat.GetRows() - row - 1));
+		for (int column = 0; column < columns; column++)
+			_mat[_mat.size() - 1].push_back(temp[column][row]);
+	}
 
-	return newMat;
+	int cols = columns;
+	columns = rows;
+	rows = cols;
 }
-Matrix Matrix::RotateAntiClockWise(Matrix mat) {
-	Matrix newMat = Matrix(mat.GetRows(), mat.GetColumns());
+void Matrix::RotateAntiClockWise() {
+	std::vector<std::vector<float>> temp = _mat;
+	_mat = std::vector<std::vector<float>>();
 
-	for (int row = 0; row < mat.GetRows(); row++)
-		for (int column = 0; column < mat.GetColumns(); column++)
-			newMat.SetValue(row, column, mat.GetValue(mat.GetColumns() - column - 1, row));
+	for (int row = 0; row < rows; row++) {
+		_mat.push_back(std::vector<float>());
 
-	return newMat;
+		for (int column = columns - 1; column >= 0; column--)
+			_mat[row].push_back(temp[column][row]);
+	}
+
+	int cols = columns;
+	columns = rows;
+	rows = cols;
 }
