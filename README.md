@@ -6,3 +6,12 @@ This builds upto 3D rendering from scratch. There are C++ source files and GLSL 
 <h3>Demo:</h3>
 </br>
 <img width="446" height="450" alt="3d_rendering_demo" src="https://github.com/user-attachments/assets/f0057255-0e80-48a1-81c5-5a69a77bc444" />
+</br>
+<h3>How to build from source? (On Arch Linux)</h3>
+1. Clone the repository
+2. Install <a href="https://cmake.org"></a>CMake</a>
+3. Run the commands in the cloned directory:
+`cmake -S . -B build`
+`cmake --build build`
+4. Run the program:
+`build/Rendered`
