@@ -13,9 +13,9 @@ This builds upto 3D rendering from scratch. There are C++ source files and GLSL 
 - Install <a href="https://cmake.org"></a>CMake</a>
 - Run the commands in the cloned directory:
   
-&nbsp; `cmake -S . -B build` </br>
-&nbsp; `cmake --build build`
+&nbsp;&nbsp; `cmake -S . -B build` </br>
+&nbsp;&nbsp; `cmake --build build`
 
 - Run the program:
   
-`build/Rendered`
+&nbsp;&nbsp; `build/Rendered`
