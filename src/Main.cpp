@@ -25,6 +25,14 @@ Matrix projectionMat(projMat);
 const int MAX_FPS = 50, SKIP_TICKS = 1000 / MAX_FPS;
 const float PI = acos(0) * 2;
 
+using Clock = std::chrono::steady_clock;
+static const auto startTime = Clock::now();
+
+unsigned long long getTickCount64() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+        Clock::now() - startTime).count();
+}
+
 int main()
 {
 	// Set up GLFW and Window
@@ -63,8 +71,8 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	DWORD tickCount = GetTickCount64();
-	DWORD next_game_tick = tickCount;
+	uint64_t tickCount = getTickCount64();
+	uint64_t next_game_tick = tickCount;
 	int sleep_time = 0, deltaTime = 0, lastTickCount = 0, frameCount = 0;
 	float rot = 0;
 
@@ -87,13 +95,13 @@ int main()
 		glfwPollEvents();
 
 		//Calculate Tick Count and Sleep Time
-		tickCount = GetTickCount64();
+		tickCount = getTickCount64();
 		deltaTime = tickCount - lastTickCount;
 		lastTickCount = tickCount;
 		next_game_tick += SKIP_TICKS;
 		sleep_time = next_game_tick - tickCount;
 		if (sleep_time >= 0)
-			Sleep(sleep_time);
+			std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 
 		frameCount++;
 	}
@@ -151,6 +159,7 @@ Matrix rot_z_mat(float rot) {
 	std::vector<std::vector<float>> mat = {
 		std::vector<float>{ cos(rot),sin(rot), 0},
 		std::vector<float>{ -sin(rot), cos(rot), 0},
-		std::vector<float>{ 0, 0, 1}};
+		std::vector<float>{ 0, 0, 1}
+	};
 	return Matrix(mat);
 }

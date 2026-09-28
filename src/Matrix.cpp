@@ -17,7 +17,7 @@ Matrix::Matrix(int columns, int rows)
 Matrix::Matrix(std::vector<float>& data)
 {
 	if (data.size() == 0) {
-		throw new std::exception("Invalid vector data passed to Matrix constructor");
+		throw new std::invalid_argument("Invalid vector data passed to Matrix constructor");
 		return;
 	}
 
@@ -29,7 +29,7 @@ Matrix::Matrix(std::vector<float>& data)
 Matrix::Matrix(std::vector<std::vector<float>>& data)
 {
 	if (data.size() == 0) {
-		throw new std::exception("Invalid vector data passed to Matrix constructor");
+		throw new std::invalid_argument("Invalid vector data passed to Matrix constructor");
 		return;
 	}
 
@@ -40,7 +40,7 @@ Matrix::Matrix(std::vector<std::vector<float>>& data)
 Matrix::Matrix(const std::vector<std::vector<float>>& data)
 {
 	if (data.size() == 0) {
-		throw new std::exception("Invalid vector data passed to Matrix constructor");
+		throw new std::invalid_argument("Invalid vector data passed to Matrix constructor");
 		return;
 	}
 
@@ -52,7 +52,7 @@ Matrix::Matrix(const std::vector<std::vector<float>>& data)
 void Matrix::SetValue(int column, int row, float num) {
 	if (column < 0 || column >= columns || row < 0 || row >= rows) {
 		std::cout << column << ":" << row;
-		throw new std::exception("Invalid column or row index passed to Matrix::SetValue");
+		throw new std::invalid_argument("Invalid column or row index passed to Matrix::SetValue");
 		return;
 	}
 
@@ -76,7 +76,7 @@ void Matrix::Print(int columnStart, int rowStart, int columnEnd, int rowEnd) {
 	//Checking for errors
 	if (columnStart > columns || columnEnd > columns || columnStart < 0 || columnEnd < 0
 		|| rowStart > rows || rowEnd > rows || rowStart < 0 || rowEnd < 0) {
-		throw new std::exception("Invalid section area passed to Matrix::Print");
+		throw new std::invalid_argument("Invalid section area passed to Matrix::Print");
 		return;
 	}
 
@@ -111,7 +111,7 @@ void Matrix::Print() {
 //Matrix property geters
 float Matrix::GetValue(int column, int row) {
 	if (column < 0 || column >= columns || row < 0 || row >= rows) {
-		throw new std::exception("Invalid column or row index passed to Matrix::GetValue");
+		throw new std::invalid_argument("Invalid column or row index passed to Matrix::GetValue");
 		return NULL;
 	}
 
@@ -140,7 +140,7 @@ Matrix Matrix::Multiply(Matrix mat2) {
 	mat2.RotateAntiClockWise();
 
 	if (columns != mat2.GetColumns()) {
-		throw new std::exception("Mat1's columns must equal Mat2's rows");
+		throw new std::invalid_argument("Mat1's columns must equal Mat2's rows");
 		return Matrix();
 	}
 

@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/blank/Code/3D-Rendering/build/cmake_install.cmake",
+		"/home/blank/Code/3D-Rendering/build/GL/glfw3/cmake_install.cmake",
+		"/home/blank/Code/3D-Rendering/build/GL/glfw3/src/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
